@@ -18,6 +18,8 @@ export default function App(){
     const [inputBased, setInputBased]= useState(1);
     const [inputTarget, setInputTarget]= useState(null);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     
 
     
@@ -42,12 +44,13 @@ export default function App(){
         async function fetchConversionData(){
             try {
                 const url = urlCurrencyConvertions + `${basedConversion}/${targetConversion}`;
+                setIsLoading(true);
                 const data = await fetchData(url);
                 console.log(data);
                 setConversionRate(data.conversion_rate); 
             } catch (error) {
                 console.log(error);
-            }
+            }finally{setIsLoading(false)}
         }
 
         if(basedConversion === 'no' || targetConversion === 'no') {
@@ -60,7 +63,7 @@ export default function App(){
     },[basedConversion,targetConversion])
 
     useEffect(function(){
-        setInputTarget(conversionRate * inputBased);
+        setInputTarget(Number(conversionRate * inputBased).toFixed(3));
     },[conversionRate]);
 
     function handleConversion(value, type){
@@ -79,24 +82,13 @@ export default function App(){
   return (
     <div className="app">
         <div className="box">
-            { conversionRate ?
             <input 
             type="number" 
             min={1}
             value={inputBased}
             onChange={(e) => handleConversion(+e.target.value,keyWords.BASED)} 
+            disabled={!conversionRate || isLoading}
             />
-
-            :
-
-            <input 
-            type="number"
-            min={1} 
-            value={inputBased}
-            readOnly 
-            onChange={(e) => handleConversion(+e.target.value,keyWords.BASED)}
-            />
-            }
 
 
             <select value={basedConversion} onChange={(e) => setBasedConversion(e.target.value)}>
@@ -113,6 +105,7 @@ export default function App(){
             type="number" 
             value={inputTarget} 
             onChange={(e) => handleConversion(+e.target.value,keyWords.TARGET)}
+            disabled={!conversionRate || isLoading}
             />
 
             <select value={targetConversion} onChange={(e) => setTargetConversion(e.target.value)}>
