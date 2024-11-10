@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { urlCurrencies,urlCurrencyConvertions } from "./api";
+import { urlCurrencies,urlCurrencyConvertions } from "./config";
 import { fetchData } from "./helper";
 
 const keyWords={
     TARGET: 'target',
     BASED:'based',
 }
+
+console.log(urlCurrencyConvertions);
+
 
 export default function App(){
 
